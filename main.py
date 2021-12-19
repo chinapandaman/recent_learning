@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -9,9 +8,9 @@ fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"
 
 class Item(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str = None
     price: float
-    tax: Optional[float] = None
+    tax: float = None
 
 
 class ModelName(str, Enum):
@@ -29,7 +28,7 @@ async def root():
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: int, needy: str, q: Optional[str] = None, short: bool = False):
+async def read_item(item_id: int, needy: str, q: str = None, short: bool = False):
     item = {"item_id": item_id, "needy": needy}
     if q:
         item.update({"q": q})
@@ -64,7 +63,7 @@ async def read_file(file_path: str):
 
 
 @app.post("/items/{item_id}")
-async def create_item(item_id: int, item: Item, q: Optional[str] = None):
+async def create_item(item_id: int, item: Item, q: str = None):
     item_dict = item.dict()
     if item.tax:
         price_with_tax = item.price + item.tax
